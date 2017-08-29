@@ -46,12 +46,13 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="0dp"
         android:contentDescription="@string/harold"
+        android:cropToPadding="true"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:srcCompat="@drawable/harold"
         app:layout_constraintTop_toTopOf="@+id/guideline3"
-        android:layout_marginTop="0dp" />
+        app:srcCompat="@drawable/harold" />
 
     <TextView
         android:id="@+id/tvFullName"
