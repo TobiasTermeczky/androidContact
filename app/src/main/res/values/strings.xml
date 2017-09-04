@@ -4,4 +4,8 @@
     <string name="sky">Sky</string>
     <string name="name">Placeholder</string>
     <string name="refresh">Refresh</string>
+    <string name="fullname">fullName</string>
+    <string name="profilepicture">profilePicture</string>
+    <string name="firstname">firstName</string>
+    <string name="lastname">lastName</string>
 </resources>
