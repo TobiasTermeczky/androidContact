@@ -30,7 +30,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class PersonList extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class PersonListFragment extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     ListView mPersonListView;
     PersonAdapter mPersonAdapter;
@@ -39,7 +39,7 @@ public class PersonList extends AppCompatActivity implements AdapterView.OnItemC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.person_list);
+        setContentView(R.layout.person_list_fragment);
         mPersonListView = (ListView) findViewById(R.id.person_list_item);
         new JsonTask().execute("https://randomuser.me/api/?results=20");
         mPersonAdapter = new PersonAdapter(getLayoutInflater(), mPersonList);
@@ -52,7 +52,7 @@ public class PersonList extends AppCompatActivity implements AdapterView.OnItemC
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Log.d("SelectedItem: ", position + "");
-        Intent intent = new Intent(getApplicationContext(), PersonDetail.class);
+        Intent intent = new Intent(getApplicationContext(), PersonDetailFragment.class);
         intent.putExtra("FIRST_NAME", mPersonList.get(position).fistName);
         intent.putExtra("LAST_NAME", mPersonList.get(position).lastName);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();

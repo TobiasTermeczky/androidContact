@@ -2,11 +2,13 @@ package nl.yzaazy.contactslist;
 
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class PersonDetail extends AppCompatActivity {
+public class PersonDetailFragment extends Fragment {
 
     TextView firstName;
     TextView lastName;
@@ -15,7 +17,7 @@ public class PersonDetail extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.person_detail);
+        setContentView(R.layout.person_detail_fragment);
         profilePicture = (ImageView) findViewById(R.id.profilePicture);
         firstName = (TextView) findViewById(R.id.tvFirstName);
         lastName = (TextView) findViewById(R.id.tvLastName);
