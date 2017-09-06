@@ -37,8 +37,8 @@ public class PersonDetailFragment extends Fragment implements View.OnTouchListen
                     //do your stuff
                     Log.d(TAG, "onSwipe: down");
                     view.setVisibility(View.GONE);
-                    firstName.setText(R.string.firstname);
-                    lastName.setText(R.string.lastname);
+                    firstName.setText("");
+                    lastName.setText("");
                     profilePicture.setImageBitmap(null);
                 }
                 return true;
@@ -46,7 +46,7 @@ public class PersonDetailFragment extends Fragment implements View.OnTouchListen
         });
         view.setOnTouchListener(this);
         if (savedInstanceState != null) {
-            if (!getString(R.string.firstname).equals(savedInstanceState.getString("firstName")) && !getString(R.string.lastname).equals(savedInstanceState.getString("lastName"))) {
+            if (!"".equals(savedInstanceState.getString("firstName")) && !"".equals(savedInstanceState.getString("lastName"))) {
                 firstName.setText(savedInstanceState.getString("firstName"));
                 lastName.setText(savedInstanceState.getString("lastName"));
                 profilePicture.setImageBitmap((Bitmap) savedInstanceState.getParcelable("profilePicture"));
