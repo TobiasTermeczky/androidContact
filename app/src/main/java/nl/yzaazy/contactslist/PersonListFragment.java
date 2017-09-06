@@ -1,28 +1,24 @@
 package nl.yzaazy.contactslist;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
+import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import org.apache.commons.lang3.text.WordUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -30,36 +26,91 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class PersonListFragment extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class PersonListFragment extends Fragment {
 
     ListView mPersonListView;
     PersonAdapter mPersonAdapter;
     ArrayList<Person> mPersonList = new ArrayList<>();
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    private OnFragmentInteractionListener mListener;
+
+//    @Override
+//    public void onAttach(Activity activity) {
+//        super.onAttach(activity);
+//        try {
+//            mListener = (OnFragmentInteractionListener) activity;
+//        } catch (ClassCastException e) {
+//            throw new ClassCastException(activity.toString()
+//                    + " must implement OnFragmentInteractionListener ...");
+//        }
+//    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.person_list_fragment);
-        mPersonListView = (ListView) findViewById(R.id.person_list_item);
-        new JsonTask().execute("https://randomuser.me/api/?results=20");
-        mPersonAdapter = new PersonAdapter(getLayoutInflater(), mPersonList);
-        mPersonListView.setAdapter(mPersonAdapter);
-        mPersonListView.setOnItemClickListener(this);
+    public void onAttach(Context context){
+        super.onAttach(context);
+
+        Activity activity;
+        if(context instanceof Activity){
+            activity = (Activity) context;
+            try {
+                mListener = (OnFragmentInteractionListener) activity;
+            } catch (ClassCastException e) {
+                throw new ClassCastException(activity.toString()
+                        + " must implement OnFragmentInteractionListener ...");
+            }
+        }
     }
 
-    //
-    // Click on selected item in list
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Log.d("SelectedItem: ", position + "");
-        Intent intent = new Intent(getApplicationContext(), PersonDetailFragment.class);
-        intent.putExtra("FIRST_NAME", mPersonList.get(position).fistName);
-        intent.putExtra("LAST_NAME", mPersonList.get(position).lastName);
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        mPersonList.get(position).profilePicture.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        byte[] byteArray = stream.toByteArray();
-        intent.putExtra("PROFILE_PICTURE", byteArray);
-        startActivity(intent);
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        View view = inflater.inflate(R.layout.person_list_fragment, container, false);
+        mPersonListView = (ListView) view.findViewById(R.id.person_list_item);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.person_list_swipe_refresh_layout);
+
+        if (savedInstanceState != null) {
+            if (!savedInstanceState.getParcelableArrayList("mPersonList").isEmpty()) {
+                mPersonList = savedInstanceState.getParcelableArrayList("mPersonList");
+            } else {
+                new JsonTask().execute("https://randomuser.me/api/?results=20");
+            }
+        } else {
+            new JsonTask().execute("https://randomuser.me/api/?results=20");
+        }
+        mPersonAdapter = new PersonAdapter(inflater, mPersonList);
+        mPersonListView.setAdapter(mPersonAdapter);
+        mPersonListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("SelectedItem: ", position + "");
+                mListener.onFragmentInteraction(mPersonList.get(position));
+            }
+        });
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mPersonList.clear();
+                mPersonAdapter.notifyDataSetChanged();
+                new JsonTask().execute("https://randomuser.me/api/?results=20");
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
+        return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle saveInstanceState) {
+        saveInstanceState.putParcelableArrayList("mPersonList", mPersonList);
+    }
+
+    interface OnFragmentInteractionListener {
+        void onFragmentInteraction(Person person);
     }
 
     private class JsonTask extends AsyncTask<String, String, String> {
@@ -106,70 +157,15 @@ public class PersonListFragment extends AppCompatActivity implements AdapterView
                 for (int i = 0; i < jResults.length(); i++) {
                     JSONObject jPerson = jResults.getJSONObject(i);
                     Person p = new Person();
-                    p.fistName = jPerson.getJSONObject("name").getString("first");
-                    p.lastName = jPerson.getJSONObject("name").getString("last");
-                    LoadBitmap loadBitmap = new LoadBitmap(jPerson.getJSONObject("picture").getString("large"), p);
-                    loadBitmap.execute();
+                    p.firstName = WordUtils.capitalize(jPerson.getJSONObject("name").getString("first"));
+                    p.lastName = WordUtils.capitalize(jPerson.getJSONObject("name").getString("last"));
+                    p.profilePicture = jPerson.getJSONObject("picture").getString("large");
+                    mPersonList.add(p);
+                    mPersonAdapter.notifyDataSetChanged();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-
-        class LoadBitmap extends AsyncTask<String, Void, Bitmap> {
-            private String mUrl;
-            private Person mP;
-
-            LoadBitmap(String url, Person p) {
-                mUrl = url;
-                mP = p;
-            }
-
-            @Override
-            protected Bitmap doInBackground(String... params) {
-                final String mURL = mUrl;
-                try {
-                    URL url = new URL(mURL);
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    connection.setDoInput(true);
-                    connection.connect();
-                    InputStream input = connection.getInputStream();
-                    return BitmapFactory.decodeStream(input);
-                } catch (IOException e) {
-                    // Log exception
-                    return null;
-                }
-            }
-
-            @Override
-            protected void onPostExecute(Bitmap myBitmap) {
-                super.onPostExecute(myBitmap);
-                mP.profilePicture = getRoundedCornerBitmap(myBitmap);
-                mPersonList.add(mP);
-                mPersonAdapter.notifyDataSetChanged();
-            }
-        }
-    }
-
-    public static Bitmap getRoundedCornerBitmap(Bitmap bitmap) {
-        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
-                bitmap.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(output);
-
-        final int color = 0xff424242;
-        final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        final RectF rectF = new RectF(rect);
-        final float roundPx = 150;
-
-        paint.setAntiAlias(true);
-        canvas.drawARGB(0, 0, 0, 0);
-        paint.setColor(color);
-        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
-
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, rect, rect, paint);
-
-        return output;
     }
 }

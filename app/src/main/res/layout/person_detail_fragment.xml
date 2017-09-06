@@ -16,15 +16,6 @@
         tools:layout_editor_absoluteX="180dp" />
 
     <android.support.constraint.Guideline
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/guideline2"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.25"
-        tools:layout_editor_absoluteY="128dp"
-        tools:layout_editor_absoluteX="0dp" />
-
-    <android.support.constraint.Guideline
         android:id="@+id/guideline3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -39,13 +30,14 @@
         android:layout_height="0dp"
         android:contentDescription="@string/sky"
         android:scaleType="centerCrop"
-        app:layout_constraintBottom_toTopOf="@+id/guideline2"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/sky" />
+        app:srcCompat="@drawable/sky"
+        android:layout_marginBottom="50dp" />
 
     <ImageView
         android:id="@+id/profilePicture"
@@ -57,11 +49,11 @@
         android:layout_marginStart="8dp"
         android:contentDescription="@string/harold"
         android:cropToPadding="true"
+        android:src="@android:drawable/ic_menu_report_image"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline3"
-        app:srcCompat="@drawable/harold"
-        app:layout_constraintHorizontal_bias="0.498" />
+        app:layout_constraintTop_toTopOf="@+id/guideline3" />
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="wrap_content"
@@ -79,11 +71,11 @@
             android:id="@+id/tvFirstName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="0dp"
             android:layout_weight="1"
-            android:text="@string/name"
+            android:text="@string/firstname"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -91,13 +83,13 @@
             android:id="@+id/tvLastName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="2dp"
             android:layout_marginEnd="8dp"
             android:layout_marginLeft="2dp"
             android:layout_marginRight="8dp"
+            android:layout_marginStart="2dp"
             android:layout_marginTop="0dp"
             android:layout_weight="0.20"
-            android:text="@string/name"
+            android:text="@string/lastname"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toRightOf="@+id/tvFirstName"
             app:layout_constraintRight_toRightOf="parent"

@@ -1,30 +1,89 @@
 package nl.yzaazy.contactslist;
 
-import android.graphics.BitmapFactory;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.widget.FrameLayout;
+import android.util.Log;
+import android.view.GestureDetector;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class PersonDetailFragment extends Fragment {
+import static android.content.ContentValues.TAG;
+
+public class PersonDetailFragment extends Fragment implements View.OnTouchListener {
 
     TextView firstName;
     TextView lastName;
     ImageView profilePicture;
+    View view;
+    GestureDetector gestureDetector;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.person_detail_fragment);
-        profilePicture = (ImageView) findViewById(R.id.profilePicture);
-        firstName = (TextView) findViewById(R.id.tvFirstName);
-        lastName = (TextView) findViewById(R.id.tvLastName);
-        Bundle intent = getIntent().getExtras();
-        firstName.setText(intent.getString("FIRST_NAME"));
-        lastName.setText(intent.getString("LAST_NAME"));
-        byte[] byteArray = intent.getByteArray("PROFILE_PICTURE");
-        profilePicture.setImageBitmap(BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length));
+        view = inflater.inflate(R.layout.person_detail_fragment, container, false);
+        profilePicture = (ImageView) view.findViewById(R.id.profilePicture);
+        firstName = (TextView) view.findViewById(R.id.tvFirstName);
+        lastName = (TextView) view.findViewById(R.id.tvLastName);
+        gestureDetector = new GestureDetector(getContext(), new OnSwipeListener() {
+            @Override
+            public boolean onSwipe(Direction direction) {
+                if (direction == Direction.down) {
+                    //do your stuff
+                    Log.d(TAG, "onSwipe: down");
+                    firstName.setText(R.string.firstname);
+                    lastName.setText(R.string.lastname);
+                    profilePicture.setImageBitmap(null);
+                    view.setVisibility(View.GONE);
+                }
+                return true;
+            }
+        });
+        view.setOnTouchListener(this);
+        if (savedInstanceState != null) {
+            if (!getString(R.string.firstname).equals(savedInstanceState.getString("firstName")) && !getString(R.string.lastname).equals(savedInstanceState.getString("lastName"))) {
+                firstName.setText(savedInstanceState.getString("firstName"));
+                lastName.setText(savedInstanceState.getString("lastName"));
+                profilePicture.setImageBitmap((Bitmap) savedInstanceState.getParcelable("profilePicture"));
+                view.setVisibility(View.VISIBLE);
+            } else {
+                view.setVisibility(View.GONE);
+            }
+        } else {
+            view.setVisibility(View.GONE);
+        }
+        return view;
+    }
+
+
+    public void populateDetails(Person person) {
+        firstName.setText(person.firstName);
+        lastName.setText(person.lastName);
+        new BitmapGetter().downLoadImage(person.profilePicture, profilePicture);
+        view.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        gestureDetector.onTouchEvent(event);
+        return true;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle saveInstanceState) {
+        saveInstanceState.putString("firstName", firstName.getText().toString());
+        saveInstanceState.putString("lastName", lastName.getText().toString());
+        Bitmap profileBitmap;
+        try {
+            profileBitmap = ((BitmapDrawable) profilePicture.getDrawable()).getBitmap();
+        } catch (NullPointerException e) {
+            profileBitmap = null;
+        }
+        saveInstanceState.putParcelable("profilePicture", profileBitmap);
     }
 }
