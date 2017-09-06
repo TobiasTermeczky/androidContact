@@ -36,10 +36,10 @@ public class PersonDetailFragment extends Fragment implements View.OnTouchListen
                 if (direction == Direction.down) {
                     //do your stuff
                     Log.d(TAG, "onSwipe: down");
+                    view.setVisibility(View.GONE);
                     firstName.setText(R.string.firstname);
                     lastName.setText(R.string.lastname);
                     profilePicture.setImageBitmap(null);
-                    view.setVisibility(View.GONE);
                 }
                 return true;
             }
