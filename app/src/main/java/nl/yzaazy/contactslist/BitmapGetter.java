@@ -8,49 +8,31 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.widget.ImageView;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 class BitmapGetter {
     private Bitmap image;
 
-    Bitmap downLoadImage(String url, ImageView imageView){
-        LoadBitmap loadBitmap = new LoadBitmap(imageView);
-        loadBitmap.execute(url);
-        return image;
-    }
-
-    private class LoadBitmap extends AsyncTask<String, Void, Bitmap> {
-        private ImageView imageViewReference;
-
-        LoadBitmap(ImageView imageView) {
-            imageViewReference = imageView;
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... params) {
-            try {
-                URL url = new URL(params[0]);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setDoInput(true);
-                connection.connect();
-                InputStream input = connection.getInputStream();
-                return BitmapFactory.decodeStream(input);
-            } catch (IOException e) {
-                // Log exception
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            super.onPostExecute(bitmap);
-            imageViewReference.setImageBitmap(getRoundedCornerBitmap(bitmap));
+    private static Bitmap downloadBitmap(String givenUrl) {
+        try {
+            URL url = new URL(givenUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            return BitmapFactory.decodeStream(input);
+        } catch (IOException e) {
+            // Log exception
+            return null;
         }
     }
 
@@ -75,4 +57,87 @@ class BitmapGetter {
 
         return output;
     }
+
+    private static boolean cancelPotentialDownload(String url, ImageView imageView) {
+        BitmapDownloaderTask bitmapDownloaderTask = getBitmapDownloaderTask(imageView);
+
+        if (bitmapDownloaderTask != null) {
+            String bitmapUrl = bitmapDownloaderTask.url;
+            if ((bitmapUrl == null) || (!bitmapUrl.equals(url))) {
+                bitmapDownloaderTask.cancel(true);
+            } else {
+                // The same URL is already being downloaded.
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static BitmapDownloaderTask getBitmapDownloaderTask(ImageView imageView) {
+        if (imageView != null) {
+            Drawable drawable = imageView.getDrawable();
+            if (drawable instanceof DownloadedDrawable) {
+                DownloadedDrawable downloadedDrawable = (DownloadedDrawable) drawable;
+                return downloadedDrawable.getBitmapDownloaderTask();
+            }
+        }
+        return null;
+    }
+
+    void download(String url, ImageView imageView) {
+        if (cancelPotentialDownload(url, imageView)) {
+            BitmapDownloaderTask task = new BitmapDownloaderTask(imageView);
+            DownloadedDrawable downloadedDrawable = new DownloadedDrawable(task);
+            imageView.setImageDrawable(downloadedDrawable);
+            task.execute(url);
+        }
+    }
+
+    private static class DownloadedDrawable extends BitmapDrawable {
+        private final WeakReference<BitmapDownloaderTask> bitmapDownloaderTaskReference;
+
+        DownloadedDrawable(BitmapDownloaderTask bitmapDownloaderTask) {
+            super(
+                    bitmapDownloaderTask.imageViewReference.get().getContext().getResources(),
+                    BitmapFactory.decodeResource(bitmapDownloaderTask.imageViewReference.get().getContext().getResources(), R.drawable.ic_image_placeholder)
+            );
+            bitmapDownloaderTaskReference =
+                    new WeakReference<>(bitmapDownloaderTask);
+        }
+        BitmapDownloaderTask getBitmapDownloaderTask() {
+            return bitmapDownloaderTaskReference.get();
+        }
+    }
+
+    private class BitmapDownloaderTask extends AsyncTask<String, Void, Bitmap> {
+        private final WeakReference<ImageView> imageViewReference;
+        private String url;
+
+        BitmapDownloaderTask(ImageView imageView) {
+            imageViewReference = new WeakReference<>(imageView);
+        }
+
+        @Override
+        // Actual download method, run in the task thread
+        protected Bitmap doInBackground(String... params) {
+            // params comes from the execute() call: params[0] is the url.
+            return downloadBitmap(params[0]);
+        }
+
+        @Override
+        // Once the image is downloaded, associates it to the imageView
+        protected void onPostExecute(Bitmap bitmap) {
+            if (isCancelled()) {
+                bitmap = null;
+            }
+
+            ImageView imageView = imageViewReference.get();
+            BitmapDownloaderTask bitmapDownloaderTask = getBitmapDownloaderTask(imageView);
+            // Change bitmap only if this process is still associated with it
+            if (this == bitmapDownloaderTask) {
+                imageView.setImageBitmap(getRoundedCornerBitmap(bitmap));
+            }
+        }
+    }
+
 }

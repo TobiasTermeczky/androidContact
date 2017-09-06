@@ -52,7 +52,8 @@ class PersonAdapter extends BaseAdapter {
         Person person = (Person) mPersonArrayList.get(position);
         viewHolder.firstName.setText(person.firstName);
         viewHolder.lastName.setText(person.lastName);
-        new BitmapGetter().downLoadImage(person.profilePicture, viewHolder.profilePicture);
+//        viewHolder.profilePicture.setImageDrawable(viewHolder.profilePicture.getContext().getResources().getDrawable(R.drawable.ic_image_placeholder));
+        new BitmapGetter().download(person.profilePicture, viewHolder.profilePicture);
         return convertView;
     }
 
