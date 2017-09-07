@@ -64,7 +64,7 @@ public class PersonDetailFragment extends Fragment implements View.OnTouchListen
     public void populateDetails(Person person) {
         firstName.setText(person.firstName);
         lastName.setText(person.lastName);
-        new BitmapGetter().downLoadImage(person.profilePicture, profilePicture);
+        new BitmapGetter().download(person.profilePicture, profilePicture);
         view.setVisibility(View.VISIBLE);
     }
 

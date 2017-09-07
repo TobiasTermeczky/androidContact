@@ -40,7 +40,7 @@ class PersonAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
         if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.person_row, null);
+            convertView = mInflater.inflate(R.layout.person_row, parent, false);
             viewHolder = new ViewHolder();
             viewHolder.profilePicture = (ImageView) convertView.findViewById(R.id.profilePicture);
             viewHolder.firstName = (TextView) convertView.findViewById(R.id.firstNameList);
@@ -52,7 +52,7 @@ class PersonAdapter extends BaseAdapter {
         Person person = (Person) mPersonArrayList.get(position);
         viewHolder.firstName.setText(person.firstName);
         viewHolder.lastName.setText(person.lastName);
-        new BitmapGetter().downLoadImage(person.profilePicture, viewHolder.profilePicture);
+        new BitmapGetter().download(person.profilePicture, viewHolder.profilePicture);
         return convertView;
     }
 
