@@ -1,4 +1,4 @@
-package nl.yzaazy.contactslist;
+package nl.yzaazy.contactslist.Helpers;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,18 +11,17 @@ import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.ImageView;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.concurrent.Executor;
 
-class BitmapGetter {
+import nl.yzaazy.contactslist.R;
+
+public class BitmapGetter {
     private Bitmap image;
 
     private static Bitmap downloadBitmap(String givenUrl) {
@@ -87,7 +86,7 @@ class BitmapGetter {
         return null;
     }
 
-    void download(String url, ImageView imageView) {
+    public void download(String url, ImageView imageView) {
         if (cancelPotentialDownload(url, imageView)) {
             BitmapDownloaderTask task = new BitmapDownloaderTask(imageView);
             DownloadedDrawable downloadedDrawable = new DownloadedDrawable(task);
@@ -107,6 +106,7 @@ class BitmapGetter {
             bitmapDownloaderTaskReference =
                     new WeakReference<>(bitmapDownloaderTask);
         }
+
         BitmapDownloaderTask getBitmapDownloaderTask() {
             return bitmapDownloaderTaskReference.get();
         }

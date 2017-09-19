@@ -4,16 +4,20 @@ import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.media.MediaPlayer;
-import android.media.MediaTimestamp;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import nl.yzaazy.contactslist.Fragments.PersonDetailFragment;
+import nl.yzaazy.contactslist.Fragments.PersonListFragment;
+import nl.yzaazy.contactslist.Helpers.ShakeDetector;
+import nl.yzaazy.contactslist.Model.Person;
+
 public class PersonMainActivity extends AppCompatActivity implements PersonListFragment.OnFragmentInteractionListener {
+    MediaPlayer mPlayer;
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
     private ShakeDetector mShakeDetector;
-    MediaPlayer mPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +34,7 @@ public class PersonMainActivity extends AppCompatActivity implements PersonListF
 
                 if (!mPlayer.isPlaying()) {
                     mPlayer.start();
-                }else {
+                } else {
                     mPlayer.pause();
                     mPlayer.seekTo(0);
                 }

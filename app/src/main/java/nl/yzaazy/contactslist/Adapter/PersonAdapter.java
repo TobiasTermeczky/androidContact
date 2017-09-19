@@ -1,4 +1,4 @@
-package nl.yzaazy.contactslist;
+package nl.yzaazy.contactslist.Adapter;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,12 +10,16 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-class PersonAdapter extends BaseAdapter {
+import nl.yzaazy.contactslist.Helpers.BitmapGetter;
+import nl.yzaazy.contactslist.Model.Person;
+import nl.yzaazy.contactslist.R;
+
+public class PersonAdapter extends BaseAdapter {
 
     private LayoutInflater mInflater;
     private ArrayList mPersonArrayList;
 
-    PersonAdapter(LayoutInflater layoutInflater, ArrayList<Person> personArrayList) {
+    public PersonAdapter(LayoutInflater layoutInflater, ArrayList<Person> personArrayList) {
         mInflater = layoutInflater;
         mPersonArrayList = personArrayList;
     }

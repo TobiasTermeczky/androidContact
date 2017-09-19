@@ -1,9 +1,9 @@
-package nl.yzaazy.contactslist;
+package nl.yzaazy.contactslist.Helpers;
 
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
-class OnSwipeListener extends GestureDetector.SimpleOnGestureListener {
+public class OnSwipeListener extends GestureDetector.SimpleOnGestureListener {
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
@@ -77,7 +77,7 @@ class OnSwipeListener extends GestureDetector.SimpleOnGestureListener {
     }
 
 
-    enum Direction {
+    public enum Direction {
         up,
         down,
         left,

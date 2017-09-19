@@ -1,9 +1,9 @@
-package nl.yzaazy.contactslist;
+package nl.yzaazy.contactslist.Model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-class Person implements Parcelable {
+public class Person implements Parcelable {
     public static final Creator<Person> CREATOR = new Creator<Person>() {
         @Override
         public Person createFromParcel(Parcel in) {
@@ -16,17 +16,19 @@ class Person implements Parcelable {
         }
     };
 
-    String firstName;
-    String lastName;
-    String profilePicture;
+    public String firstName;
+    public String lastName;
+    public String profilePicture;
+    public String profilePictureHighRes;
 
-    Person() {
+    public Person() {
     }
 
     protected Person(Parcel in) {
         firstName = in.readString();
         lastName = in.readString();
         profilePicture = in.readString();
+        profilePictureHighRes = in.readString();
     }
 
     @Override
@@ -39,6 +41,7 @@ class Person implements Parcelable {
         dest.writeString(firstName);
         dest.writeString(lastName);
         dest.writeString(profilePicture);
+        dest.writeString(profilePictureHighRes);
 
     }
 }

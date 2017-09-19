@@ -1,4 +1,4 @@
-package nl.yzaazy.contactslist;
+package nl.yzaazy.contactslist.Fragments;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -12,6 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import nl.yzaazy.contactslist.Helpers.BitmapGetter;
+import nl.yzaazy.contactslist.Helpers.OnSwipeListener;
+import nl.yzaazy.contactslist.Model.Person;
+import nl.yzaazy.contactslist.R;
 
 import static android.content.ContentValues.TAG;
 
@@ -64,7 +69,7 @@ public class PersonDetailFragment extends Fragment implements View.OnTouchListen
     public void populateDetails(Person person) {
         firstName.setText(person.firstName);
         lastName.setText(person.lastName);
-        new BitmapGetter().download(person.profilePicture, profilePicture);
+        new BitmapGetter().download(person.profilePictureHighRes, profilePicture);
         view.setVisibility(View.VISIBLE);
     }
 

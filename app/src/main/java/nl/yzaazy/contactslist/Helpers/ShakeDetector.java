@@ -1,10 +1,9 @@
-package nl.yzaazy.contactslist;
+package nl.yzaazy.contactslist.Helpers;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.util.FloatMath;
 
 public class ShakeDetector implements SensorEventListener {
 
@@ -27,10 +26,6 @@ public class ShakeDetector implements SensorEventListener {
         this.mListener = listener;
     }
 
-    public interface OnShakeListener {
-        public void onShake(int count);
-    }
-
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // ignore
@@ -49,7 +44,7 @@ public class ShakeDetector implements SensorEventListener {
             float gZ = z / SensorManager.GRAVITY_EARTH;
 
             // gForce will be close to 1 when there is no movement.
-            float gForce = (float)Math.sqrt(gX * gX + gY * gY + gZ * gZ);
+            float gForce = (float) Math.sqrt(gX * gX + gY * gY + gZ * gZ);
 
             if (gForce > SHAKE_THRESHOLD_GRAVITY) {
                 final long now = System.currentTimeMillis();
@@ -69,5 +64,9 @@ public class ShakeDetector implements SensorEventListener {
                 mListener.onShake(mShakeCount);
             }
         }
+    }
+
+    public interface OnShakeListener {
+        public void onShake(int count);
     }
 }
