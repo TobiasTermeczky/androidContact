@@ -8,4 +8,5 @@
     <string name="profilepicture">profilePicture</string>
     <string name="firstname">First Name</string>
     <string name="lastname">Last Name</string>
+    <string name="placeholder">placeholder</string>
 </resources>

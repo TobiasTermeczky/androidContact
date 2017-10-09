@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import nl.yzaazy.contactslist.Helpers.BitmapGetter;
 import nl.yzaazy.contactslist.Helpers.OnSwipeListener;
 import nl.yzaazy.contactslist.Model.Person;
@@ -24,6 +26,8 @@ public class PersonDetailFragment extends Fragment implements View.OnTouchListen
 
     TextView firstName;
     TextView lastName;
+    TextView email;
+    TextView phone;
     ImageView profilePicture;
     View view;
     GestureDetector gestureDetector;
@@ -35,6 +39,8 @@ public class PersonDetailFragment extends Fragment implements View.OnTouchListen
         profilePicture = (ImageView) view.findViewById(R.id.profilePicture);
         firstName = (TextView) view.findViewById(R.id.tvFirstName);
         lastName = (TextView) view.findViewById(R.id.tvLastName);
+        email = (TextView) view.findViewById(R.id.tvEmail);
+        phone = (TextView) view.findViewById(R.id.tvPhone);
         gestureDetector = new GestureDetector(getContext(), new OnSwipeListener() {
             @Override
             public boolean onSwipe(Direction direction) {
@@ -54,6 +60,8 @@ public class PersonDetailFragment extends Fragment implements View.OnTouchListen
             if (!"".equals(savedInstanceState.getString("firstName")) && !"".equals(savedInstanceState.getString("lastName"))) {
                 firstName.setText(savedInstanceState.getString("firstName"));
                 lastName.setText(savedInstanceState.getString("lastName"));
+                email.setText(savedInstanceState.getString("email"));
+                phone.setText(savedInstanceState.getString("phone"));
                 profilePicture.setImageBitmap((Bitmap) savedInstanceState.getParcelable("profilePicture"));
                 view.setVisibility(View.VISIBLE);
             } else {
@@ -69,6 +77,8 @@ public class PersonDetailFragment extends Fragment implements View.OnTouchListen
     public void populateDetails(Person person) {
         firstName.setText(person.firstName);
         lastName.setText(person.lastName);
+        email.setText(person.email);
+        phone.setText(person.phone);
         new BitmapGetter().download(person.profilePictureHighRes, profilePicture);
         view.setVisibility(View.VISIBLE);
     }
@@ -83,6 +93,8 @@ public class PersonDetailFragment extends Fragment implements View.OnTouchListen
     public void onSaveInstanceState(Bundle saveInstanceState) {
         saveInstanceState.putString("firstName", firstName.getText().toString());
         saveInstanceState.putString("lastName", lastName.getText().toString());
+        saveInstanceState.putString("email", email.getText().toString());
+        saveInstanceState.putString("phone", phone.getText().toString());
         Bitmap profileBitmap;
         try {
             profileBitmap = ((BitmapDrawable) profilePicture.getDrawable()).getBitmap();

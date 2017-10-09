@@ -22,6 +22,7 @@ import nl.yzaazy.contactslist.R;
 
 public class PersonListFragment extends Fragment implements PersonInterface{
 
+    String url = "https://randomuser.me/api/?results=20";
     ListView mPersonListView;
     PersonAdapter mPersonAdapter;
     ArrayList<Person> mPersonList = new ArrayList<>();
@@ -61,10 +62,10 @@ public class PersonListFragment extends Fragment implements PersonInterface{
             if (!savedInstanceState.getParcelableArrayList("mPersonList").isEmpty()) {
                 mPersonList = savedInstanceState.getParcelableArrayList("mPersonList");
             } else {
-                new PersonGetter(this).execute("https://randomuser.me/api/?results=20");
+                new PersonGetter(this).execute(url);
             }
         } else {
-            new PersonGetter(this).execute("https://randomuser.me/api/?results=20");
+            new PersonGetter(this).execute(url);
         }
         mPersonAdapter = new PersonAdapter(inflater, mPersonList);
         mPersonListView.setAdapter(mPersonAdapter);
@@ -80,7 +81,7 @@ public class PersonListFragment extends Fragment implements PersonInterface{
             public void onRefresh() {
                 mPersonList.clear();
                 mPersonAdapter.notifyDataSetChanged();
-                new PersonGetter(PersonListFragment.this).execute("https://randomuser.me/api/?results=20");
+                new PersonGetter(PersonListFragment.this).execute(url);
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });

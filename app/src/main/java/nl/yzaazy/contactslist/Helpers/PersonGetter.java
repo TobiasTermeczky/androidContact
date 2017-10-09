@@ -71,6 +71,8 @@ public class PersonGetter extends AsyncTask<String, String, String> {
                 Person p = new Person();
                 p.firstName = WordUtils.capitalize(jPerson.getJSONObject("name").getString("first"));
                 p.lastName = WordUtils.capitalize(jPerson.getJSONObject("name").getString("last"));
+                p.email = jPerson.getString("email");
+                p.phone = jPerson.getString("phone");
                 p.profilePicture = jPerson.getJSONObject("picture").getString("thumbnail");
                 p.profilePictureHighRes = jPerson.getJSONObject("picture").getString("large");
                 mPersonList.add(p);

@@ -18,6 +18,8 @@ public class Person implements Parcelable {
 
     public String firstName;
     public String lastName;
+    public String email;
+    public String phone;
     public String profilePicture;
     public String profilePictureHighRes;
 
@@ -27,6 +29,8 @@ public class Person implements Parcelable {
     protected Person(Parcel in) {
         firstName = in.readString();
         lastName = in.readString();
+        email = in.readString();
+        phone = in.readString();
         profilePicture = in.readString();
         profilePictureHighRes = in.readString();
     }
@@ -40,6 +44,8 @@ public class Person implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(firstName);
         dest.writeString(lastName);
+        dest.writeString(email);
+        dest.writeString(phone);
         dest.writeString(profilePicture);
         dest.writeString(profilePictureHighRes);
 
