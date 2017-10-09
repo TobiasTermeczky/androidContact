@@ -1,7 +1,5 @@
-package nl.yzaazy.contactslist;
+package nl.yzaazy.contactslist.Adapter;
 
-import android.content.Context;
-import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,13 +10,17 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-class PersonAdapter extends BaseAdapter{
+import nl.yzaazy.contactslist.Helpers.BitmapGetter;
+import nl.yzaazy.contactslist.Model.Person;
+import nl.yzaazy.contactslist.R;
 
-    private LayoutInflater mInflator;
+public class PersonAdapter extends BaseAdapter {
+
+    private LayoutInflater mInflater;
     private ArrayList mPersonArrayList;
 
-    PersonAdapter(LayoutInflater layoutInflater, ArrayList<Person> personArrayList){
-        mInflator = layoutInflater;
+    public PersonAdapter(LayoutInflater layoutInflater, ArrayList<Person> personArrayList) {
+        mInflater = layoutInflater;
         mPersonArrayList = personArrayList;
     }
 
@@ -29,7 +31,7 @@ class PersonAdapter extends BaseAdapter{
 
     @Override
     public Object getItem(int position) {
-        Log.i("getItem()","");
+        Log.i("getItem()", "");
         return mPersonArrayList.get(position);
     }
 
@@ -41,32 +43,27 @@ class PersonAdapter extends BaseAdapter{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
-
-        if(convertView == null) {
-            convertView = mInflator.inflate(R.layout.person_row, null);
-
+        if (convertView == null) {
+            convertView = mInflater.inflate(R.layout.person_row, parent, false);
             viewHolder = new ViewHolder();
-            viewHolder.imageView = (ImageView) convertView.findViewById(R.id.profilePicture);
+            viewHolder.profilePicture = (ImageView) convertView.findViewById(R.id.profilePicture);
             viewHolder.firstName = (TextView) convertView.findViewById(R.id.firstNameList);
             viewHolder.lastName = (TextView) convertView.findViewById(R.id.lastNameList);
-
             convertView.setTag(viewHolder);
-        }else {
+        } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-
         Person person = (Person) mPersonArrayList.get(position);
-
-        viewHolder.imageView.setImageBitmap(person.profilePicture);
-        viewHolder.firstName.setText(person.fistName);
+        viewHolder.firstName.setText(person.firstName);
         viewHolder.lastName.setText(person.lastName);
-
+        new BitmapGetter().download(person.profilePicture, viewHolder.profilePicture);
         return convertView;
     }
 
     private static class ViewHolder {
-        ImageView imageView;
+        ImageView profilePicture;
         TextView firstName;
         TextView lastName;
     }
+
 }
