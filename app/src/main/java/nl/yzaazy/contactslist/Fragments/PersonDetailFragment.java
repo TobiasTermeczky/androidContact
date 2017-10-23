@@ -24,6 +24,7 @@ import static android.content.ContentValues.TAG;
 
 public class PersonDetailFragment extends Fragment implements View.OnTouchListener {
 
+    Boolean state = false;
     TextView firstName;
     TextView lastName;
     TextView email;
@@ -51,24 +52,28 @@ public class PersonDetailFragment extends Fragment implements View.OnTouchListen
                     firstName.setText("");
                     lastName.setText("");
                     profilePicture.setImageBitmap(null);
+                    state = false;
                 }
                 return true;
             }
         });
         view.setOnTouchListener(this);
         if (savedInstanceState != null) {
-            if (!"".equals(savedInstanceState.getString("firstName")) && !"".equals(savedInstanceState.getString("lastName"))) {
+            if (savedInstanceState.getBoolean("state")) {
                 firstName.setText(savedInstanceState.getString("firstName"));
                 lastName.setText(savedInstanceState.getString("lastName"));
                 email.setText(savedInstanceState.getString("email"));
                 phone.setText(savedInstanceState.getString("phone"));
                 profilePicture.setImageBitmap((Bitmap) savedInstanceState.getParcelable("profilePicture"));
                 view.setVisibility(View.VISIBLE);
+                state = true;
             } else {
                 view.setVisibility(View.GONE);
+                state = false;
             }
         } else {
             view.setVisibility(View.GONE);
+            state = false;
         }
         return view;
     }
@@ -81,6 +86,7 @@ public class PersonDetailFragment extends Fragment implements View.OnTouchListen
         phone.setText(person.phone);
         new BitmapGetter().download(person.profilePictureHighRes, profilePicture);
         view.setVisibility(View.VISIBLE);
+        state = true;
     }
 
     @Override
@@ -102,5 +108,6 @@ public class PersonDetailFragment extends Fragment implements View.OnTouchListen
             profileBitmap = null;
         }
         saveInstanceState.putParcelable("profilePicture", profileBitmap);
+        saveInstanceState.putBoolean("state", state);
     }
 }
